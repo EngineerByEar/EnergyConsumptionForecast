@@ -1,10 +1,84 @@
+from anyio.streams import file
+
 from schemas.train_schemas import TrainRequest
+from sklearn.tree import DecisionTreeRegressor
+import pandas as pd
+import pickle
+import os
+from utils.data_utils import get_data
+import xgboost as xgb
+from utils.evaluation_utils import evaluate_model
+from datetime import timedelta
+from datetime import datetime
+
+
+data = pd.read_csv("./data/energy_and_weather_data.csv",
+                   parse_dates=["DateUTC"])
 
 async def train_decision_tree(request: TrainRequest):
-    return {"model": "DecisionTree"}
-async def train_random_forest(request: TrainRequest):
-    return {"model": "RandomForest"}
-async def train_svm(request: TrainRequest):
-    return {"model": "SVM"}
+    training_data = get_data(request.training_data_time_start, request.training_data_time_end)
+    X_train = training_data[request.features]
+    y_train = training_data["Value"]
+    params = request.hyperparameters
+    model = DecisionTreeRegressor(criterion="squared_error",
+                                  max_depth=params["max_depth"],
+                                  min_samples_split = params["min_samples_split"],
+                                  min_samples_leaf= params["min_samples_leaf"],
+                                  max_features=params["max_features"],
+                                  ccp_alpha= params["ccp_alpha"]
+                                  )
+    model.fit(X_train, y_train)
+    model_path = "../model_storage/" + request.model_name + ".pkl"
+    if os.path.exists(model_path):
+        return "Name already in use"
+    try:
+        with open(model_path, "wb") as file:
+            pickle.dump(model, file)
+    except Exception as e:
+        return f"Error saving model: {e}"
+
+    eval_start = datetime.strptime(request.training_data_time_end, "%Y-%m-%dT%H:%M")
+    eval_end = eval_start + timedelta(days=14)
+
+    rmse = await evaluate_model(eval_start, eval_end, request.model_name, request.features)
+    return {
+        "model_name": request.model_name,
+        "model_type": request.model_type,
+        "hyperparameters": request.hyperparameters,
+        "rmse_score": rmse,
+        "features": request.features
+    }
+
 async def train_xgboost(request: TrainRequest):
-    return {"model": "XGBoost"}
+    params = request.hyperparameters
+    training_data = get_data(request.training_data_time_start, request.training_data_time_end)
+    X_train = training_data[request.features]
+    y_train = training_data["Value"]
+    params = request.hyperparameters
+    model = xgb.XGBRegressor(
+        learning_rate=params["learning_rate"],
+        n_estimators=params["n_estimators"],
+        max_depth=params["max_depth"],
+        subsample=params["subsample"],
+        colsample_bytree=params["colsample_bytree"],
+    )
+
+    model.fit(X_train, y_train)
+    model_path = "../model_storage/" + request.model_name + ".pkl"
+    if os.path.exists(model_path):
+        return "Name already in use"
+    try:
+        with open(model_path, "wb") as file:
+            pickle.dump(model, file)
+    except Exception as e:
+        return f"Error saving model: {e}"
+    eval_start = datetime.strptime(request.training_data_time_end, "%Y-%m-%dT%H:%M")
+    eval_end = eval_start + timedelta(days=14)
+    rmse = await evaluate_model(eval_start, eval_end, request.model_name, request.features)
+    return {
+        "model_name": request.model_name,
+        "model_type": request.model_type,
+        "hyperparameters": request.hyperparameters,
+        "rmse_score": rmse,
+        "features": request.features
+    }

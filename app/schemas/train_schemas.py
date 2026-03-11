@@ -6,4 +6,5 @@ class TrainRequest(BaseModel):
     model_name: str
     hyperparameters: Dict
     features: List[str]
-    training_data_timeframe: Dict[str, str]
+    training_data_time_start: str
+    training_data_time_end: str
