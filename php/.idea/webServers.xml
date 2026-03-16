@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="76c81dbf-4493-46e4-a1b3-626d43384bc6" name="SWP EnergyConsumptionForecast">
+        <fileTransfer rootFolder="/php" accessType="SFTP" host="php.ustp.cloud" port="22" sshConfigId="76f23374-89ae-4899-885e-432a4b3b69b2" sshConfig="php-mt241063-22336@php.ustp.cloud:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
