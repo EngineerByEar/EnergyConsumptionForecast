@@ -32,7 +32,6 @@ class DB_Requests{
             $stmt->bindValue(':model_creator', $model_creator);
 
             $stmt->execute();
-            print_r($stmt->errorInfo());
 
             //Get auto_incremented model_id to create the rest of the rows
             $result = $this->get_model_id($model_name);
@@ -46,7 +45,6 @@ class DB_Requests{
             $stmt->bindValue(':model_type', $model_type);
 
             $stmt->execute();
-            print_r($stmt->errorInfo());
 
 
             //Insert Hyperparameters
@@ -59,7 +57,6 @@ class DB_Requests{
                 $stmt->bindValue(':value', $value);
 
                 $stmt->execute();
-                print_r($stmt->errorInfo());
             }
 
             //Insert Features
@@ -71,7 +68,6 @@ class DB_Requests{
                 $stmt->bindValue(':feature', $feature);
 
                 $stmt->execute();
-                print_r($stmt->errorInfo());
             }
 
             //Insert Training Data Timeframe
@@ -83,7 +79,6 @@ class DB_Requests{
             $stmt->bindValue(':training_end', $training_end);
 
             $stmt->execute();
-            print_r($stmt->errorInfo());
 
             //Insert Score
             $stmt = $this->db->prepare("INSERT INTO model_score
@@ -93,7 +88,6 @@ class DB_Requests{
             $stmt->bindValue(':score', $score);
 
             $stmt->execute();
-            print_r($stmt->errorInfo());
             $this->db->commit();
             return "Model saved in Database";
         }catch(PDOException $e){
@@ -102,14 +96,13 @@ class DB_Requests{
         }
     }
 
-    public function get_all_models(){
+    public function get_model_info($model_name){
         $stmt = $this->db->prepare("SELECT m.model_id, 
                                                 m.model_name,
                                                 m.model_creator, 
                                                 m.model_creation,  
                                                 GROUP_CONCAT(DISTINCT mf.feature_name) AS features,
-                                                GROUP_CONCAT(DISTINCT mh.hyperparameter) AS hyperparameters,
-                                                GROUP_CONCAT(DISTINCT mh.value) AS hyperparameter_values,
+                                                GROUP_CONCAT(DISTINCT CONCAT(mh.hyperparameter, ':' , mh.value)) AS hyperparameters,
                                                 ms.score,
                                                 mtd.training_start,
                                                 mtd.training_end,
@@ -125,8 +118,8 @@ class DB_Requests{
                                                 ON m.model_id = mtd.model_id
                                             LEFT JOIN `model_type` mt
                                                 ON m.model_id = mt.model_id
-                                            GROUP BY m.model_id
-                                            ");
+                                            WHERE m.model_name = :model_name");
+        $stmt->bindValue(':model_name', $model_name);
         $stmt->execute();
         return $stmt->fetchALL(PDO::FETCH_ASSOC);
 
@@ -145,11 +138,13 @@ class DB_Requests{
     }
 
     public function get_leaderboard(){
-        $stmt = $this->db->prepare("SELECT m.model_name, ms.score
+        $stmt = $this->db->prepare("SELECT m.model_name, ms.score, mt.model_type
                                             FROM model m
                                             LEFT JOIN model_score ms
                                                 ON m.model_id = ms.model_id
-                                            ORDER BY ms.score DESC");
+                                            LEFT JOIN model_type mt
+                                                ON m.model_id = mt.model_id
+                                            ORDER BY ms.score ASC");
         $stmt->execute();
         return $stmt->fetchALL(PDO::FETCH_ASSOC);
     }
@@ -161,19 +156,19 @@ class DB_Requests{
                                                 ON m.model_id = ms.model_id
                                             ORDER BY ms.score DESC");
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
     }
 
     public function get_features($model_name){
         $stmt = $this->db->prepare("SELECT 
-                                            GROUP_CONCAT(DISTINCT mf.feature_name) AS features
+                                            DISTINCT mf.feature_name
                                             FROM model m 
                                             LEFT JOIN `model_features` mf
                                                 ON m.model_id = mf.model_id
                                             WHERE m.model_name = :model_name");
         $stmt->bindValue(':model_name', $model_name);
         $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
     }
 
 
