@@ -1,7 +1,7 @@
 from fastapi import FastAPI
-from routes.train import router as train_router
-from routes.predict import router as predict_router
-from routes.plot import router as plot_router
+from Python_API.routes.train import router as train_router
+from Python_API.routes.predict import router as predict_router
+from Python_API.routes.plot import router as plot_router
 
 app = FastAPI()
 

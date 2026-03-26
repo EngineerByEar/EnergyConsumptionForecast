@@ -1,19 +1,19 @@
 import io
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
-from schemas.plot_schemas import PlotPrediction
+from Python_API.schemas.plot_schemas import PlotPrediction
 from fastapi.responses import StreamingResponse
 
 async def plot_prediction(data: PlotPrediction, model_name: str):
+
     fig, ax = plt.subplots(figsize=(12, 5))
     ax.plot(data["time"], data["y_pred"], label="Prediction", alpha=0.5)
     ax.plot(data["time"], data["y_true"], label="True")
-    print(len(data["time"]))
+
     if len(data["time"]) < 48:
         ax.xaxis.set_major_locator(mdates.HourLocator(range(25)[::2]))
         ax.xaxis.set_major_formatter(mdates.DateFormatter("%D-%H:%M"))
     elif 48 < len(data["time"]) < 500:
-        print("?")
         ax.xaxis.set_major_locator(mdates.DayLocator())
         ax.xaxis.set_major_formatter(mdates.DateFormatter("%y-%m-%d"))
     else:
@@ -38,8 +38,9 @@ async def plot_ranking(data):
     plt.bar(data["model_name"], data["score"], label = data["model_name"], color = colors)
     plt.title("Model Performance")
     plt.xlabel("Model")
-    plt.ylabel("Score")
-    plt.legend()
+    plt.ylabel("RMSE-Score")
+    plt.legend(bbox_to_anchor=(1,1))
+    plt.xticks(rotation=90)
 
     buf = io.BytesIO()
     plt.savefig(buf, format="png", bbox_inches="tight")

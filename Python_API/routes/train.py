@@ -1,6 +1,6 @@
 from fastapi import APIRouter
-from schemas.train_schemas import TrainRequest
-from utils.train_utils import train_decision_tree, train_xgboost
+from Python_API.schemas.train_schemas import TrainRequest
+from Python_API.utils.train_utils import train_decision_tree, train_xgboost
 
 router = APIRouter()
 
