@@ -1,71 +1,71 @@
 # ⚡ Energy Consumption Forecast
 
-This project is a full-stack machine learning application for forecasting energy consumption based on historical usage and weather data. It demonstrates the end-to-end development of a data-driven system — from data acquisition and feature engineering to model training, evaluation, and deployment.
+This project is a full-stack application for forecasting hourly energy consumption using machine learning models and weather data.
+It combines data preprocessing, feature engineering, model training, and a simple web interface to explore and compare predictions.
 
-## 🎯 Project Overview
 
-The goal of this project is to predict hourly energy consumption using machine learning models and external influencing factors such as weather conditions and temporal patterns.
+## 🎯 Overview
 
-It highlights practical skills in:
+The application predicts energy consumption based on historical usage and external factors such as weather and time-related features.
+Users can:
+- Train different machine learning models
+- Configure feature sets and time ranges
+- Compare model performance
+- Generate and visualize predictions
 
-Time series feature engineering
-Model selection and evaluation
-Data integration from multiple sources
-Building and deploying ML-powered applications
-## 🧠 Key Features
-Train and compare multiple machine learning models
-Customize feature sets (time, weather, lag-based features)
-Evaluate model performance using RMSE
-Generate and visualize predictions
-Compare models via a leaderboard-style ranking
-## 🤖 Machine Learning Approach
 
-The project focuses on two model types to illustrate trade-offs between simplicity and performance:
+## 🤖 Models
 
-Decision Tree – interpretable baseline model
-XGBoost – high-performance gradient boosting model
+Two model types are implemented to compare different approaches:
+- **Decision Tree** – simple and interpretable baseline  
+- **XGBoost** – more complex gradient boosting model with higher predictive performance  
 
-This comparison demonstrates:
 
-The impact of model complexity on prediction quality
-Practical considerations such as resource constraints and scalability
-## 📊 Data & Feature Engineering
+## 📊 Data
 
 The models are trained on:
+- Historical hourly energy consumption data  
+- Weather data (e.g. temperature, wind speed, precipitation, sunlight)  
 
-Historical hourly energy consumption data
-Weather data (e.g., temperature, wind, precipitation, sunlight)
+### Feature Engineering
 
-Key feature engineering steps include:
+The dataset includes:
+- **Lag features** (e.g. previous hour/day consumption)
+- **Rolling averages** for smoothing short-term fluctuations  
+- **Derived features** such as heating and cooling demand  
+- **Time-based features** (hour of day, weekday, seasonality)  
 
-Creation of lag features for short-term forecasting
-Rolling averages to smooth temporal patterns
-Derived indicators such as heating and cooling demand
-Time-based features (hour, weekday, seasonality)
+Missing values are handled using previous observations or averaged values from surrounding time periods.
 
-Handling missing and inconsistent data was an important part of the pipeline, ensuring robust model performance.
+## 🏗️ System Architecture
 
-## 🏗️ System Design
+The application is structured into three main components:
+- **Frontend (PHP)**  
+  Interface for training models, viewing results, and generating predictions  
+- **Backend API (Python / FastAPI)**  
+  Handles model training, evaluation, and prediction  
+- **Database (MariaDB)**  
+  Stores model configurations, metadata, and evaluation results  
 
-The application follows a modular architecture:
 
-Frontend: Interface for training models and visualizing results
-Backend API: Handles model training, evaluation, and predictions
-Database: Stores model configurations and performance metrics
+## 🔌 API Functionality
 
-This separation of concerns reflects real-world ML system design and deployment practices.
+The backend provides endpoints for:
+- Training models with selected features and parameters  
+- Generating predictions  
+- Evaluating models using RMSE  
+- Comparing model performance across runs  
 
-## 📈 Key Takeaways
+## 📈 Functionality
 
-This project demonstrates the ability to:
+The frontend provides:
+- A form to train new models  
+- A leaderboard to compare model performance  
+- A detail view for trained models  
+- A prediction page with visual comparison of predicted vs. actual values  
 
-Build an end-to-end machine learning pipeline
-Work with real-world, imperfect datasets
-Apply feature engineering techniques for time series problems
-Compare and evaluate models using appropriate metrics
-Design and implement a usable ML application
-## 🚀 Potential Improvements
-Integration of additional model types (e.g., neural networks, ARIMA)
-Automated hyperparameter optimization
-Deployment in a cloud environment for scalability
-Real-time prediction capabilities
+## 🚀 Possible Extensions
+
+- Additional model types (e.g. neural networks, ARIMA)  
+- Automated hyperparameter tuning  
+- Real-time prediction pipeline  
