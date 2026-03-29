@@ -1,4 +1,4 @@
-#⚡ Energy Consumption Forecast
+# ⚡ Energy Consumption Forecast
 
 This project is a full-stack machine learning application for forecasting energy consumption based on historical usage and weather data. It demonstrates the end-to-end development of a data-driven system — from data acquisition and feature engineering to model training, evaluation, and deployment.
 
