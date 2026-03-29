@@ -3,6 +3,7 @@
 This project is a full-stack application for forecasting hourly energy consumption using machine learning models and weather data.
 It combines data preprocessing, feature engineering, model training, and a simple web interface to explore and compare predictions.
 
+https://github.com/user-attachments/assets/aca86bc5-7dbd-4777-b00e-1178311309f0
 
 ## 🎯 Overview
 
